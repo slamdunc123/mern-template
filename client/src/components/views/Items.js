@@ -10,16 +10,7 @@ import {
 } from '../../redux/actions/itemActions';
 
 // reactstrap
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Form,
-  FormGroup,
-  Label,
-  Input
-} from 'reactstrap';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 
 // prop-types
 import PropTypes from 'prop-types';
@@ -31,10 +22,12 @@ class Items extends Component {
   state = {
     addModal: false,
     updateModal: false,
+    deleteModal: false,
     id: '',
     name: '',
     desc: '',
-    error: ''
+    error: '',
+    success: ''
   };
 
   // get app state by getItems dispatch
@@ -56,6 +49,13 @@ class Items extends Component {
     });
   };
 
+  // set delete modal state
+  deleteToggle = () => {
+    this.setState({
+      deleteModal: !this.state.deleteModal
+    });
+  };
+
   // set state when filling out form fields
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
@@ -67,7 +67,9 @@ class Items extends Component {
   onAddClick = () => {
     this.setState({
       addModal: true,
-      updateModal: false
+      updateModal: false,
+      deleteModal: false,
+      success: ''
     });
   };
 
@@ -76,7 +78,6 @@ class Items extends Component {
     if (this.state.addModal) {
       return (
         <div>
-          <h4>Add Modal Placeholder</h4>
           <Modal isOpen={this.state.addModal}>
             {/* <Modal isOpen='true'> */}
             <ModalHeader toggle={this.addToggle}>
@@ -85,30 +86,32 @@ class Items extends Component {
               <p className='error'>{this.state.error}</p>{' '}
             </ModalHeader>
             <ModalBody>
-              <Form onSubmit={this.onSubmitAddItem}>
-                <FormGroup>
-                  <Label for='name'>Name</Label>
-                  <Input
+              <form onSubmit={this.onSubmitAddItem}>
+                <div className='form-group'>
+                  <label htmlFor='name'>Name</label>
+                  <input
                     type='text'
                     name='name'
                     id='name'
                     placeholder='Add Name'
                     onChange={this.onChange}
+                    className='form-control'
                   />
-
-                  <Label for='desc'>Description</Label>
-                  <Input
+                </div>
+                <div className='form-group'>
+                  <label htmlFor='desc'>Description</label>
+                  <input
                     type='text'
                     name='desc'
                     id='desc'
                     placeholder='Add Description'
                     onChange={this.onChange}
+                    className='form-control'
                   />
-                  <Button color='dark' style={{ marginTop: '2rem' }} block>
-                    Add Item
-                  </Button>
-                </FormGroup>
-              </Form>
+                  <br />
+                  <button className='btn btn-dark btn-block'>Add Item</button>
+                </div>
+              </form>
             </ModalBody>
           </Modal>
         </div>
@@ -118,7 +121,7 @@ class Items extends Component {
 
   // submit add form and call addItem dispatch
   onSubmitAddItem = e => {
-    const { id, name, desc } = this.state;
+    const { name, desc } = this.state;
     e.preventDefault();
     // form validation
     if (name === '' || desc === '') {
@@ -135,6 +138,7 @@ class Items extends Component {
       this.setState({
         addModal: false,
         error: '',
+        success: 'Item added successfully',
         name: '',
         desc: ''
       });
@@ -150,9 +154,11 @@ class Items extends Component {
     this.setState({
       updateModal: true,
       addModal: false,
+      deleteModal: false,
       id: id,
       name: name,
-      desc: desc
+      desc: desc,
+      success: ''
     });
   };
 
@@ -161,13 +167,6 @@ class Items extends Component {
     if (this.state.updateModal) {
       return (
         <div>
-          Update Modal Placeholder
-          {/* <Button
-            className='btn btn-danger btn-xs float-right'
-            onClick={this.closeAddModal}
-          >
-            X
-          </Button> */}
           <Modal isOpen={this.state.updateModal}>
             {/* <Modal isOpen='true'> */}
             <ModalHeader toggle={this.updateToggle}>
@@ -176,31 +175,36 @@ class Items extends Component {
               <p className='error'>{this.state.error}</p>{' '}
             </ModalHeader>
             <ModalBody>
-              <Form onSubmit={this.onSubmitUpdateItem}>
-                <FormGroup>
-                  <Label for='name'>Name</Label>
-                  <Input
+              <form onSubmit={this.onSubmitUpdateItem}>
+                <div className='form-group'>
+                  <label htmlFor='name'>Name</label>
+                  <input
                     type='text'
                     name='name'
                     id='name'
                     placeholder='Update Name'
                     onChange={this.onChange}
                     defaultValue={this.state.name}
+                    className='form-control'
                   />
-                  <Label for='desc'>Description</Label>
-                  <Input
+                </div>
+                <div className='form-group'>
+                  <label htmlFor='desc'>Description</label>
+                  <input
                     type='text'
                     name='desc'
                     id='desc'
                     placeholder='Update Description'
                     onChange={this.onChange}
                     defaultValue={this.state.desc}
+                    className='form-control'
                   />
-                  <Button color='dark' style={{ marginTop: '2rem' }} block>
+                  <br />
+                  <button className='btn btn-dark btn-block'>
                     Update Item
-                  </Button>
-                </FormGroup>
-              </Form>
+                  </button>
+                </div>
+              </form>
             </ModalBody>
           </Modal>
         </div>
@@ -227,6 +231,7 @@ class Items extends Component {
       this.setState({
         updateModal: false,
         error: '',
+        success: 'Item updated successfully',
         name: '',
         desc: ''
       });
@@ -237,7 +242,49 @@ class Items extends Component {
 
   // call deleteItem dispatch
   onDeleteClick = id => {
+    this.setState({
+      updateModal: false,
+      addModal: false,
+      deleteModal: true,
+      id: id,
+      // name: name,
+      // desc: desc,
+      success: ''
+    });
+  };
+
+  // render update form modal
+  renderDeleteModal = () => {
+    if (this.state.deleteModal) {
+      return (
+        <div>
+          <Modal isOpen={this.state.deleteModal}>
+            {/* <Modal isOpen='true'> */}
+            <ModalHeader toggle={this.deleteToggle}>
+              Delete Item - {this.state.id}
+            </ModalHeader>
+            <ModalBody>
+              <p className='error'>Are you sure?</p>{' '}
+              <form onSubmit={this.onSubmitDeleteItem}>
+                <button className='btn btn-dark btn-block'>Delete Item</button>
+              </form>
+            </ModalBody>
+          </Modal>
+        </div>
+      );
+    }
+  };
+
+  // submit delete form and call deleteItem dispatch
+  onSubmitDeleteItem = e => {
+    const { id } = this.state;
+    e.preventDefault();
     this.props.deleteItem(id);
+    this.setState({
+      deleteModal: false,
+      error: '',
+      success: 'Item deleted successfully'
+    });
   };
 
   // *** RENDER COMPONENT ***
@@ -252,7 +299,8 @@ class Items extends Component {
         {/* show modal based on state value */}
         {this.renderAddModal()}
         {this.renderUpdateModal()}
-
+        {this.renderDeleteModal()}
+        <p className='success'>{this.state.success}</p>{' '}
         <div className='container'>
           <button className='btn btn-primary' onClick={this.onAddClick}>
             Add Item

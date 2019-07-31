@@ -6,7 +6,7 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
+  // NavLink,
   Container
 } from 'reactstrap';
 
@@ -25,11 +25,11 @@ class Navigation extends Component {
   };
 
   // toggle burger menu when menu link is clicked
-  closeBurgerMenu() {
+  closeBurgerMenu = () => {
     if (this.state.isOpen === true) {
       this.toggleBurgerMenu();
     }
-  }
+  };
 
   render() {
     return (
