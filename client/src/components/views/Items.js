@@ -24,7 +24,7 @@ import {
 // prop-types
 import PropTypes from 'prop-types';
 
-class ItemsList extends Component {
+class Items extends Component {
   // *** STATE ***
 
   // set initital local state of component
@@ -304,7 +304,7 @@ class ItemsList extends Component {
 // *** PROPS ***
 
 // set prop types
-ItemsList.propTypes = {
+Items.propTypes = {
   getItems: PropTypes.func.isRequired,
   items: PropTypes.object.isRequired
 };
@@ -334,4 +334,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ItemsList);
+)(Items);
